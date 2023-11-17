@@ -14,11 +14,11 @@ from streamlit.web.server import websocket_headers
 from streamlit_chat import message
 
 
-qdrant_url = 'https://58de2381-e750-4aed-8eb2-7b08d8faf30b.us-east4-0.gcp.cloud.qdrant.io:6333'
-os.environ['SENTENCE_TRANSFORMERS_HOME'] = '/mnt/data/MedRAG/model_cache/'
+qdrant_url = 'https://05eacc30-67bb-4870-ad13-9ab539b30239.us-east4-0.gcp.cloud.qdrant.io:6333'
+os.environ['SENTENCE_TRANSFORMERS_HOME'] = '/mnt/data/MedRAG-JA/model_cache/'
 
 
-model_kwargs = {'device': 'cpu'}
+model_kwargs = {'device': 'cpu'}https://05eacc30-67bb-4870-ad13-9ab539b30239.us-east4-0.gcp.cloud.qdrant.io:6333https://05eacc30-67bb-4870-ad13-9ab539b30239.us-east4-0.gcp.cloud.qdrant.io:6333
 encode_kwargs = {'normalize_embeddings': True}
 embeddings = HuggingFaceBgeEmbeddings(model_name="BAAI/bge-small-en",
                                       model_kwargs=model_kwargs,
