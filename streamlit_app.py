@@ -18,7 +18,7 @@ qdrant_url = 'https://05eacc30-67bb-4870-ad13-9ab539b30239.us-east4-0.gcp.cloud.
 os.environ['SENTENCE_TRANSFORMERS_HOME'] = '/mnt/data/MedRAG-JA/model_cache/'
 
 
-model_kwargs = {'device': 'cpu'}https://05eacc30-67bb-4870-ad13-9ab539b30239.us-east4-0.gcp.cloud.qdrant.io:6333https://05eacc30-67bb-4870-ad13-9ab539b30239.us-east4-0.gcp.cloud.qdrant.io:6333
+model_kwargs = {'device': 'cpu'}
 encode_kwargs = {'normalize_embeddings': True}
 embeddings = HuggingFaceBgeEmbeddings(model_name="BAAI/bge-small-en",
                                       model_kwargs=model_kwargs,
