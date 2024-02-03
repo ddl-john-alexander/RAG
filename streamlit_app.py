@@ -72,7 +72,7 @@ embed = OpenAIEmbeddings(
 
 text_field = "symptoms"
 # initialize pinecone
-    pinecone.init(
+pinecone.init(
     api_key=PINECONE_API_KEY,
     environment=PINECONE_ENV
 )
