@@ -2,7 +2,7 @@ import os
 import pickle
 import random
 import streamlit as st
-
+from langchain.embeddings import OpenAIEmbeddings
 from langchain import PromptTemplate
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatAnthropic
