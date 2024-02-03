@@ -42,8 +42,9 @@ if 'messages' not in st.session_state:
 
 
 st.set_page_config(initial_sidebar_state='collapsed')
+
 #anthropic_key = st.sidebar.text_input("Enter your Anthropic API key", type="password")
-#qdrant_key = st.sidebar.text_input("Enter your Qdrant API key", type="password")
+
 clear_button = st.sidebar.button("Clear Conversation", key="clear")
 
 # Comment below lines if you don't want to read default keys from env vars
@@ -70,13 +71,13 @@ embed = OpenAIEmbeddings(
 
 text_field = "symptoms"
 # initialize pinecone
-pinecone.init(
+pc = Pinecone(
     api_key=PINECONE_API_KEY,
     environment=PINECONE_ENV
 )
 
 index_name = "medical-qa-search"
-index = pinecone.Index(index_name)
+index = pc.Index(index_name)
 
 # switch back to normal index for langchain
 vectorstore = Pinecone(
