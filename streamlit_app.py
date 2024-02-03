@@ -6,7 +6,7 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain import PromptTemplate
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatAnthropic
-from langchain.vectorstores.pinecone import Pinecone
+from langchain.vectorstores.pinecone import Pinecone as lcpc
 import pinecone
 
 from streamlit.web.server import websocket_headers
@@ -77,7 +77,7 @@ index_name = "medical-qa-search"
 index = pc.Index(index_name)
 
 # switch back to normal index for langchain
-vectorstore = Pinecone(
+vectorstore = lcpc(
     index, embed.embed_query, text_field
 )
 
