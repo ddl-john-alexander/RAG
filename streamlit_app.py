@@ -72,13 +72,10 @@ embed = OpenAIEmbeddings(
 
 text_field = "symptoms"
 # initialize pinecone
-pinecone.init(
-    api_key=PINECONE_API_KEY,
-    environment=PINECONE_ENV
-)
+pc = Pinecone()
 
 index_name = "medical-qa-search"
-index = pinecone.Index(index_name)
+index = pc.Index(index_name)
 
 # switch back to normal index for langchain
 vectorstore = lcpc(
