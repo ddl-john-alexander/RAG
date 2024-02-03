@@ -2,11 +2,11 @@ import os
 import pickle
 import random
 import streamlit as st
-from langchain.embeddings.openai import OpenAIEmbeddings
+
 from langchain import PromptTemplate
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatAnthropic
-from langchain.vectorstores.pinecone import Pinecone as lcpc
+from langchain.vectorstores.pinecone import Pinecone
 import pinecone
 
 from streamlit.web.server import websocket_headers
@@ -42,14 +42,16 @@ if 'messages' not in st.session_state:
 
 
 st.set_page_config(initial_sidebar_state='collapsed')
-
 #anthropic_key = st.sidebar.text_input("Enter your Anthropic API key", type="password")
-
+#qdrant_key = st.sidebar.text_input("Enter your Qdrant API key", type="password")
 clear_button = st.sidebar.button("Clear Conversation", key="clear")
 
 # Comment below lines if you don't want to read default keys from env vars
 if not anthropic_key:
   anthropic_key = os.getenv('ANTHROPIC_API_KEY') 
+
+if not qdrant_key:
+  qdrant_key = os.environ['QDRANT_API_KEY']
 
 qa_chain = None
 doc_store = None
@@ -70,19 +72,22 @@ embed = OpenAIEmbeddings(
 )
 
 text_field = "symptoms"
+
 # initialize pinecone
-    pinecone.init(
+pinecone.init(
     api_key=PINECONE_API_KEY,
     environment=PINECONE_ENV
 )
 
 index_name = "medical-qa-search"
-index = pineco.Index(index_name)
+index = pinecone.Index(index_name)
 
 # switch back to normal index for langchain
-vectorstore = lcpc(
+vectorstore = Pinecone(
     index, embed.embed_query, text_field
 )
+
+
 
 if doc_store and anthropic_key:
     rag_llm = ChatAnthropic(temperature=0,
