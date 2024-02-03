@@ -71,10 +71,7 @@ embed = OpenAIEmbeddings(
 
 text_field = "symptoms"
 # initialize pinecone
-pc = Pinecone(
-    api_key=PINECONE_API_KEY,
-    environment=PINECONE_ENV
-)
+pc = Pinecone()
 
 index_name = "medical-qa-search"
 index = pc.Index(index_name)
@@ -83,8 +80,6 @@ index = pc.Index(index_name)
 vectorstore = Pinecone(
     index, embed.embed_query, text_field
 )
-
-
 
 if doc_store and anthropic_key:
     rag_llm = ChatAnthropic(temperature=0,
