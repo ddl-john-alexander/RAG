@@ -50,9 +50,6 @@ clear_button = st.sidebar.button("Clear Conversation", key="clear")
 if not anthropic_key:
   anthropic_key = os.getenv('ANTHROPIC_API_KEY') 
 
-if not qdrant_key:
-  qdrant_key = os.environ['QDRANT_API_KEY']
-
 qa_chain = None
 doc_store = None
 
