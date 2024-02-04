@@ -5,8 +5,8 @@ import streamlit as st
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain import PromptTemplate
 from langchain.chains import RetrievalQA
-from langchain.chat_models import ChatAnthropic
-from langchain.vectorstores.pinecone import Pinecone as lcpc
+from langchain.chat_models import ChatOpenAI
+from langchain.vectorstores.pinecone import Pinecone 
 import pinecone
 
 from streamlit.web.server import websocket_headers
@@ -72,19 +72,24 @@ embed = OpenAIEmbeddings(
 
 text_field = "symptoms"
 # initialize pinecone
-pc = Pinecone()
+pinecone.init(
+    api_key=PINECONE_API_KEY,
+    environment=PINECONE_ENV
+)
 
 index_name = "medical-qa-search"
-index = pc.Index(index_name)
+index = pinecone.Index(index_name)
 
 # switch back to normal index for langchain
-vectorstore = lcpc(
+vectorstore = Pinecone(
     index, embed.embed_query, text_field
 )
 
-if doc_store and anthropic_key:
-    rag_llm = ChatAnthropic(temperature=0,
-                            anthropic_api_key=anthropic_key)
+rag_llm = ChatOpenAI(
+    openai_api_key=OPENAI_API_KEY,
+    model_name='gpt-4',
+    temperature=0.0
+)
     
     qa_chain = RetrievalQA.from_chain_type(llm=rag_llm,
                                        chain_type="stuff",
