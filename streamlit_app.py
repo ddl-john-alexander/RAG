@@ -91,7 +91,7 @@ rag_llm = ChatOpenAI(
     temperature=0.0
 )
     
-    qa_chain = RetrievalQA.from_chain_type(llm=rag_llm,
+qa_chain = RetrievalQA.from_chain_type(llm=rag_llm,
                                        chain_type="stuff",
                                        chain_type_kwargs={"prompt": PROMPT},
                                        retriever=vectorstore.as_retriever(search_kwargs={"k": 5}),
