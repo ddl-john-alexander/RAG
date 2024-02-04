@@ -15,7 +15,6 @@ from streamlit_chat import message
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY') 
 PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
 PINECONE_ENV = os.getenv('PINECONE_API_ENV')
-anthropic_key = os.getenv('ANTHROPIC_API_KEY')
 
 #Create prompt template
 prompt_template = """Use the following pieces of context to answer the question enclosed within  3 backticks at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
@@ -44,13 +43,7 @@ if 'messages' not in st.session_state:
 
 st.set_page_config(initial_sidebar_state='collapsed')
 
-#anthropic_key = st.sidebar.text_input("Enter your Anthropic API key", type="password")
-
 clear_button = st.sidebar.button("Clear Conversation", key="clear")
-
-# Comment below lines if you don't want to read default keys from env vars
-if not anthropic_key:
-  anthropic_key = os.getenv('ANTHROPIC_API_KEY') 
 
 qa_chain = None
 doc_store = None
