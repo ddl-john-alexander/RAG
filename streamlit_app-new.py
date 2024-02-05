@@ -2,30 +2,21 @@ import os
 import pickle
 import random
 import streamlit as st
-
+from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain import PromptTemplate
 from langchain.chains import RetrievalQA
-from langchain.chat_models import ChatAnthropic
-from langchain.embeddings import HuggingFaceBgeEmbeddings
-from langchain.vectorstores.qdrant import Qdrant
-from qdrant_client import QdrantClient
+from langchain.chat_models import ChatOpenAI
+from langchain.vectorstores.pinecone import Pinecone 
+import pinecone
 
 from streamlit.web.server import websocket_headers
 from streamlit_chat import message
 
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY') 
+PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
+PINECONE_ENV = os.getenv('PINECONE_API_ENV')
 
-qdrant_url = 'https://05eacc30-67bb-4870-ad13-9ab539b30239.us-east4-0.gcp.cloud.qdrant.io:6333'
-os.environ['SENTENCE_TRANSFORMERS_HOME'] = '/mnt/data/MedRAG-JA/model_cache/'
-
-
-model_kwargs = {'device': 'cpu'}
-encode_kwargs = {'normalize_embeddings': True}
-embeddings = HuggingFaceBgeEmbeddings(model_name="BAAI/bge-small-en",
-                                      model_kwargs=model_kwargs,
-                                      encode_kwargs=encode_kwargs
-                                     )
-
-
+#Create prompt template
 prompt_template = """Use the following pieces of context to answer the question enclosed within  3 backticks at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
 Please provide an answer which is factually correct and based on the information retrieved from the vector store.
 Please also mention any quotes supporting the answer if any present in the context supplied within two double quotes "" .
@@ -35,6 +26,7 @@ Please also mention any quotes supporting the answer if any present in the conte
 QUESTION:```{question}```
 ANSWER:
 """
+
 PROMPT = PromptTemplate(template=prompt_template, input_variables=["context","question"])
 #
 chain_type_kwargs = {"prompt": PROMPT}
@@ -49,18 +41,9 @@ if 'messages' not in st.session_state:
         {"role": "system", "content": "You are a helpful assistant."}
     ]
 
-
 st.set_page_config(initial_sidebar_state='collapsed')
-anthropic_key = st.sidebar.text_input("Enter your Anthropic API key", type="password")
-qdrant_key = st.sidebar.text_input("Enter your Qdrant API key", type="password")
+
 clear_button = st.sidebar.button("Clear Conversation", key="clear")
-
-# Comment below lines if you don't want to read default keys from env vars
-if not anthropic_key:
-  anthropic_key = os.getenv('ANTHROPIC_API_KEY') 
-
-if not qdrant_key:
-  qdrant_key = os.environ['QDRANT_API_KEY']
 
 qa_chain = None
 doc_store = None
@@ -71,26 +54,40 @@ if clear_button:
     st.session_state['messages'] = [
         {"role": "system", "content": "You are a helpful assistant."}
     ]
+ 
+
+model = 'text-embedding-ada-002'
+
+embed = OpenAIEmbeddings(
+    model=model,
+    openai_api_key=OPENAI_API_KEY
+)
+
+text_field = "symptoms"
+# initialize pinecone
+pinecone.init(
+    api_key=PINECONE_API_KEY,
+    environment=PINECONE_ENV
+)
+
+index_name = "medical-qa-search"
+index = pinecone.Index(index_name)
+
+# switch back to normal index for langchain
+vectorstore = Pinecone(
+    index, embed.embed_query, text_field
+)
+
+rag_llm = ChatOpenAI(
+    openai_api_key=OPENAI_API_KEY,
+    model_name='gpt-4',
+    temperature=0.0
+)
     
-
-if qdrant_key:
-    client = QdrantClient(url=qdrant_url,api_key=qdrant_key)
-    
-    doc_store = Qdrant(
-        client=client,
-        collection_name="medical_qa_search",
-        embeddings=embeddings)
-
-
-
-if doc_store and anthropic_key:
-    rag_llm = ChatAnthropic(temperature=0,
-                            anthropic_api_key=anthropic_key)
-    
-    qa_chain = RetrievalQA.from_chain_type(llm=rag_llm,
+qa_chain = RetrievalQA.from_chain_type(llm=rag_llm,
                                        chain_type="stuff",
                                        chain_type_kwargs={"prompt": PROMPT},
-                                       retriever=doc_store.as_retriever(search_kwargs={"k": 5}),
+                                       retriever=vectorstore.as_retriever(search_kwargs={"k": 5}),
                                        return_source_documents=True
                                       )
 
