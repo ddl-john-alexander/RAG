@@ -64,13 +64,13 @@ embed = OpenAIEmbeddings(
 )
 
 text_field = "text"
-# initialize pinecone
+# initialize pinecone vector store
 pinecone.init(
     api_key=PINECONE_API_KEY,
     environment=PINECONE_ENV
 )
 
-index_name = "medical-qa-search"
+index_name = "nwh-plus-benefits"
 index = pinecone.Index(index_name)
 
 # switch back to normal index for langchain
