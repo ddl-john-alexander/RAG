@@ -17,17 +17,17 @@ PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
 PINECONE_ENV = os.getenv('PINECONE_API_ENV')
 
 #Create prompt template
-prompt_template = """Use the following pieces of context to answer the question enclosed within  3 backticks at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
-Please provide an answer which is factually correct and based on the information retrieved from the vector store.
-Please also mention any quotes supporting the answer if any present in the context supplied within two double quotes "" .
-
+prompt_template = """You are an AI assistant for answering questions about employee benefits in health care policy documentation.
+You are given the following extracted parts of a long document and a question. 
+If you don't know the answer, just say "Hmm, I'm not sure." Don't try to make up an answer.
+If the question is not about employee benefits or policy coverage, politely inform them that you are tuned to only answer questions pertaining to policy coverage.
+Question: {question}
+=========
 {context}
-
-QUESTION:```{question}```
-ANSWER:
+=========
+Answer in Markdown:
 """
-
-PROMPT = PromptTemplate(template=prompt_template, input_variables=["context","question"])
+PROMPT = PromptTemplate(template=prompt_template, input_variables=["question", "context"])
 #
 chain_type_kwargs = {"prompt": PROMPT}
 
@@ -63,7 +63,7 @@ embed = OpenAIEmbeddings(
     openai_api_key=OPENAI_API_KEY
 )
 
-text_field = "symptoms"
+text_field = "text"
 # initialize pinecone
 pinecone.init(
     api_key=PINECONE_API_KEY,
