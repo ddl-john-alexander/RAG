@@ -1,7 +1,5 @@
 # RAG
-This project demonstrates how to create a Retrieval Augmented Generation (RAG) 
-
-This file  constructs a prompt and calls OpenAI's models to get a response. You will need your OpenAPI and Pinecone keys to be set in the environment for this example. To work with OpenAI, set up your Pinecone index to have 1536 dimensions.
+This project demonstrates how to create a Retrieval Augmented Generation (RAG) solution in Domino.
 
 ## Files
 
