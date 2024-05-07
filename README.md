@@ -19,7 +19,7 @@ This project demonstrates how to create a Retrieval Augmented Generation (RAG) s
   
 *  app.sh : Script required to setup and use Streamlit in Domino
   
-*  streamlit_app.py : This file contains code that sets up the UI and workflow for a Streamlit chatbot. The app needs an Anthropic and Qdrant key to set in the sidebar to run
+*  streamlit_app.py : This file contains code that sets up the UI and workflow for a Streamlit chatbot. The app needs OpenAI and Pinecone API keys to set in the sidebar to run
 
 *  apple-10K-20230930.pdf :  The Apple 10-K document to answer queries about.
 

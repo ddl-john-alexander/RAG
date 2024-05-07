@@ -63,20 +63,19 @@ embed = OpenAIEmbeddings(
     openai_api_key=OPENAI_API_KEY
 )
 
+# Defines the field name in the data which contains the text to be embedded.
 text_field = "text"
-# initialize pinecone vector store
-pinecone.init(
-    api_key=PINECONE_API_KEY,
-    environment=PINECONE_ENV
-)
 
-index_name = "nwh-plus-benefits"
-index = pinecone.Index(index_name)
+# Defines the name of the Pinecone index to be used.
+index_name = "mrag-fin-docs"
+pc = Pinecone(api_key=PINECONE_API_KEY)  
+index = pc.Index(index_name)
 
-# switch back to normal index for langchain
-vectorstore = Pinecone(
-    index, embedddings, text_field
-)
+# Creates an instance of the Pinecone class. It uses the previously created index,
+# the previously created embeddings object, and the text field.
+vectorstore = PineconeVectorStore(  
+    index, embeddings, text_field  
+) 
 
 rag_llm = ChatOpenAI(
     openai_api_key=OPENAI_API_KEY,
