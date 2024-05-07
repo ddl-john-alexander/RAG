@@ -6,8 +6,9 @@ from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain import PromptTemplate
 from langchain.chains import RetrievalQA
 from langchain.chat_models import ChatOpenAI
-from langchain.vectorstores.pinecone import Pinecone 
-import pinecone
+from langchain_pinecone import PineconeVectorStore
+
+from pinecone import Pinecone
 
 from streamlit.web.server import websocket_headers
 from streamlit_chat import message
@@ -17,10 +18,9 @@ PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
 PINECONE_ENV = os.getenv('PINECONE_API_ENV')
 
 #Create prompt template
-prompt_template = """You are an AI assistant for answering questions about employee benefits in health care policy documentation.
-You are given the following extracted parts of a long document and a question. 
+prompt_template = """You are an AI assistant with expertise in financial analysis. You are given the following extracted parts and a question. 
 If you don't know the answer, just say "Hmm, I'm not sure." Don't try to make up an answer.
-If the question is not about employee benefits or policy coverage, politely inform them that you are tuned to only answer questions pertaining to policy coverage.
+If the question is not about financial analysis, politely inform them that you are tuned to only answer questions pertaining to financial analysis.
 Question: {question}
 =========
 {context}
@@ -75,7 +75,7 @@ index = pinecone.Index(index_name)
 
 # switch back to normal index for langchain
 vectorstore = Pinecone(
-    index, embed.embed_query, text_field
+    index, embedddings, text_field
 )
 
 rag_llm = ChatOpenAI(
